@@ -7,3 +7,7 @@ body, #wrapper {
 footer {
     margin-top: auto;
 }
+
+.bg-black {
+    background-color: #1d2124;
+}
