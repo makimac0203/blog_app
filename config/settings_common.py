@@ -139,4 +139,6 @@ MESSAGE_TAG = {
     messages.INFO: 'alert alert-info',
 }
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 
