@@ -12,7 +12,7 @@ from django.contrib import messages
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from models import Blog
+from .models import Blog
 
 logger = logging.getLogger(__name__)
 
