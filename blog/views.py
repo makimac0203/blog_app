@@ -38,6 +38,7 @@ class InquiryView(generic.FormView):
 class BlogListView(LoginRequiredMixin, generic.ListView):
     model = Blog
     template_name = 'blog_list.html'
+    paginate_by = 2
 
     def get_queryset(self):
         blogs = Blog.objects.filter(user=self.request.user).order_by('-created_at')
