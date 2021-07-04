@@ -71,10 +71,47 @@ class TestBlogUpdateView(LoggedInTestCase):
         params = {'title': 'タイトル編集後'}
 
         #日記編集処理(Post)を実行
-        response = self.client.post(reverse_lazy('blog:blog_update', kwargs={'blog_id': blog.blog_id}), params)
+        response = self.client.post(reverse_lazy('blog:blog_update', kwargs={'blog_id': blog.pk}), params)
 
         #日記詳細ページへのリダイレクトを検証
-        self.assertRedirects(response, reverse_lazy('blog:blog_detail', kwargs={'blog_id': blog.blog_id}))
+        self.assertRedirects(response, reverse_lazy('blog:blog_detail', kwargs={'blog_id': blog.pk}))
 
         #日記データが編集されたかを検証
-        self.assertEqual(Blog.objects.get(blog_id=blog.blog_id).title, 'タイトル編集後')
+        self.assertEqual(Blog.objects.get(pk=blog.pk).title, 'タイトル編集後')
+
+    def test_update_blog_failure(self):
+        """日記編集処理が失敗することを検証する"""
+
+        #日記編集処理(Post)を実行
+        response = self.client.post(reverse_lazy('blog:blog_update', kwargs={'blog_id': 999}))
+
+        #存在しない日記データを編集しようとしてエラーになることを検証
+        self.assertEqual(response.status_code, 404)
+
+
+class TestBlogDeleteView(LoggedInTestCase):
+    """BlogDeleteView用のテストクラス"""
+
+    def test_delete_blog_success(self):
+        """日記の削除処理が成功することを検証する"""
+
+        #テスト用日記データの作成
+        blog = Blog.objects.create(user=self.test_user, title='タイトル')
+
+        #日記削除処理(Post)を実行
+        response = self.client.post(reverse_lazy('blog:blog_delete', kwargs={'blog_id': blog.pk}))
+
+        #日記リストページへのリダイレクトを検証
+        self.assertRedirects(response, reverse_lazy('blog:blog_list'))
+
+        #日記データが削除されたかを検証
+        self.assertEqual(Blog.objects.filter(pk=blog.pk).count(), 0)
+
+    def test_delete_blog_failure(self):
+        """日記削除処理が失敗することを検証する"""
+
+        #日記削除処理(Post)を実行
+        response = self.client.post(reverse_lazy('blog:blog_delete', kwargs={'blog_id': 999}))
+
+        #存在しない日記データを削除しようとしてエラーになることを検証
+        self.assertEqual(response.status_code, 404)
